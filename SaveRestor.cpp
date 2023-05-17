@@ -24,8 +24,8 @@ void SaveRestor::createPath(const fs::path &Path, const fs::path &savePath)
 			fs::perm_options::add);
 		fs::permissions(
 			savePath,
-			fs::perms::owner_exec | fs::perms::others_all | fs::perms::group_all,
-			fs::perm_options::add);
+			fs::perms::others_all | fs::perms::group_all,
+			fs::perm_options::remove);
 	}
 	else
 	{
@@ -66,7 +66,7 @@ std::shared_ptr<User> SaveRestor::restorUser(std::string &str)
 	std::istringstream iss(str);
 	while (iss >> word)
 	{
-		std::cout << word << std::endl;
+		//std::cout << word << std::endl; // для диагностики - можно убрать
 		if (nextIsID)
 		{
 			user->setID(stoll(word));
@@ -119,7 +119,7 @@ void SaveRestor::restorUsers(std::vector<User> &users)
 		std::cout << "opened " << filename << '\n';
 		for (std::string line; std::getline(s, line);)
 		{
-			std::cout << line << '\n'; // для диагностики - можно убрать
+			//std::cout << line << '\n'; // для диагностики - можно убрать
 			shared_ptr<User> restorUser_ptr = restorUser(line);
 			if (restorUser_ptr)
 				users.push_back(*restorUser_ptr);
@@ -138,7 +138,7 @@ std::string SaveRestor::saveMessage(Message &message)
 void SaveRestor::saveChat(std::shared_ptr<Chat> chat)
 {
 	// write
-	std::cout << savePathChats / chat->getChatName() << std::endl;
+	//std::cout << savePathChats / chat->getChatName() << std::endl; // для диагностики - можно убрать
 	std::string filename{savePathChats / chat->getChatName()};
 	std::fstream s{filename, s.binary | s.trunc | s.out};
 
@@ -150,7 +150,7 @@ void SaveRestor::saveChat(std::shared_ptr<Chat> chat)
 	{
 		for (auto message : chat->_messages)
 		{
-			std::cout << saveMessage(message) << std::endl;
+			//std::cout << saveMessage(message) << std::endl; // для диагностики - можно убрать
 			s << saveMessage(message) << endl;
 		}
 	}
@@ -169,8 +169,8 @@ std::shared_ptr<Chat> SaveRestor::restorChat(fs::path path)
 	else
 	{
 		t.seekg(0);
-		std::cout << "opened " << filename << '\n';		   // для диагностики - можно убрать
-		std::cout << "opened " << path.filename() << '\n'; // для диагностики - можно убрать
+		//std::cout << "opened " << filename << '\n';		   // для диагностики - можно убрать
+		//std::cout << "opened " << path.filename() << '\n'; // для диагностики - можно убрать
 		shared_ptr<Chat> restor = make_shared<Chat>(Chat(path.filename()));
 
 		for (std::string line; std::getline(t, line);)
@@ -218,7 +218,7 @@ void SaveRestor::restorChats(std::vector<std::shared_ptr<Chat>>& chats)
 	else
 	{
 		t.seekg(0);
-		std::cout << "opened " << filename << '\n';		   // для диагностики - можно убрать
+		//std::cout << "opened " << filename << '\n';		   // для диагностики - можно убрать
 		//std::cout << "opened " << path.filename() << '\n'; // для диагностики - можно убрать
 		std::string isName, isTime, isMessage;
 
@@ -232,21 +232,21 @@ void SaveRestor::restorChats(std::vector<std::shared_ptr<Chat>>& chats)
 			{
 				isName = line.substr(name.size() + sep.size());
 				doneName = true;
-				std::cout << "isName: " << isName << std::endl;
+				//std::cout << "isName: " << isName << std::endl; // для диагностики - можно убрать
 			};
 			pos = line.find(timesend);
 			if (pos != std::string::npos)
 			{
 				isTime = line.substr(timesend.size() + sep.size());
 				doneTime = true;
-				std::cout << "isTime: " << isTime << std::endl;
+				//std::cout << "isTime: " << isTime << std::endl;  // для диагностики - можно убрать
 			};
 			pos = line.find(mess);
 			if (pos != std::string::npos)
 			{
 				isMessage = line.substr(mess.size() + sep.size());
 				doneMessage = true;
-				std::cout << "isMessage: " << isMessage << std::endl;
+				//std::cout << "isMessage: " << isMessage << std::endl; // для диагностики - можно убрать
 			};
 			if (doneName && doneTime && doneMessage)
 			{
